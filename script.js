@@ -1,7 +1,5 @@
 // Variables for the DOM elements
 
-
-const endgameEl = document.getElementById("end-game-container");
 const settings = document.getElementById("settings");
 const settingsForm = document.getElementById("settings-form");
 const settingsBtn = document.getElementById("settings-btn");
@@ -32,6 +30,7 @@ input.addEventListener("input", () => {
 
     if(wordInput === randomWord) { //check so input and array are the same
         addWordToDOM();
+        updateScore();
         updateTime();
         input.value ="";
     }
@@ -40,17 +39,40 @@ input.addEventListener("input", () => {
 const scoreEl = document.getElementById("score");
 
 function updateScore() {
-    if(newWord === word) {
-        const counter = document.getElementById("score");
-        counter++;
-    }
+    score += 5;
+    scoreEl.innerText = score;
 }
+
 
 const timeEl = document.getElementById("time");
 function updateTime() {
     time += 5;
     timeEl.innerText = time;
 }
+
+const timeRunning = setInterval(startTimer, 1000);
+function startTimer() {
+    time--;
+    timeEl.innerText = time;
+    if (time === 0) {
+        clearInterval(timeRunning);
+        endgame();
+    }
+}
+
+const endgameEl = document.getElementById("end-game-container");
+
+function endgame() {
+    endgameEl.style.display = 'block';
+}
+
+/*
+Add an event listener to the settings button that will hide the settings 
+
+Add an event listener for the settings form so that you can change the difficulty 
+
+Set time depending on difficulty in the eventlistener 
+*/
 
 // Array
 const words = [
@@ -76,3 +98,4 @@ const words = [
 ];
 
 addWordToDOM(); //Initial call
+startTimer(); //Initial timer
