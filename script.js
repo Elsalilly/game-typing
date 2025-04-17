@@ -6,13 +6,13 @@ let randomWord;
 let score = 0;
 
 //Initializing time
-let time = 10;
+let time = 15;
 
 let timeRunning; // variable for the interval
 
 function startGame() {
     addWordToDOM(); //Initial call
-    let timeRunning = setInterval(startTimer, 1000);
+    timeRunning = setInterval(startTimer, 1000); //start timer
 }
 
 const word = document.getElementById("word");
@@ -38,23 +38,24 @@ input.addEventListener("input", () => {
 
 const scoreEl = document.getElementById("score");
 
-function updateScore() {
+function updateScore() { // adding 5 points for every correct answer
     score += 5;
     scoreEl.innerText = score;
 }
 
 
-const timeEl = document.getElementById("time");
+const timeEl = document.getElementById("time"); // adding 5 seconds for every correct answer
 function updateTime() {
     time += 5;
     timeEl.innerText = time;
 }
 
-//let timeRunning = setInterval(startTimer, 1000);
+
 function startTimer() {
     time--;
     timeEl.innerText = time;
     console.log(time);
+    
     if (time === 0) {
         clearInterval(timeRunning);
         endgame();
@@ -65,6 +66,9 @@ const endgameEl = document.getElementById("end-game-container");
 
 function endgame() {
     endgameEl.style.display = 'block';
+
+    settings.style.dysplay = "block"; //shows the panel
+    settingsBtn.style.display = "block"; //shows the button
 }
 
 const settingsBtn = document.getElementById("settings-btn");
@@ -75,10 +79,17 @@ const difficultySelect = document.getElementById("difficulty");
 settingsBtn.addEventListener("click", hideSettings);
 
 function hideSettings() {
-    settingsBtn.style.display = 'none';
+    settingsBtn.style.display = 'none'; //hides the button
 }
 
-settingsForm.addEventListener("click", chooseDifficulty);
+settingsBtn.addEventListener("click", () => {
+    settings.style.dysplay = "none"; //hides the panel
+    settingsBtn.style.display = "none"; //hides the button
+});
+
+settingsBtn.onclick = () => location.reload();
+
+settingsForm.addEventListener("click", chooseDifficulty); //needs like a double click to change
 
 function chooseDifficulty(e) {
     e.preventDefault(); // prevent form from submitting normally
@@ -107,7 +118,8 @@ function chooseDifficulty(e) {
 
     endgameEl.style.display = "none";
 
-    timeRunning = setInterval(startTimer, 1000);
+    startGame();
+    hideSettings(); //hide settings when the game starts
 }
 
 // Array
@@ -132,5 +144,3 @@ const words = [
   "loving",
   "north",
 ];
-
-startGame();
