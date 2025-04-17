@@ -1,9 +1,3 @@
-// Variables for the DOM elements
-
-const settings = document.getElementById("settings");
-const settingsForm = document.getElementById("settings-form");
-const settingsBtn = document.getElementById("settings-btn");
-const difficultySelect = document.getElementById("difficulty");
 
 //Initializing word
 let randomWord;
@@ -13,7 +7,13 @@ let score = 0;
 
 //Initializing time
 let time = 10;
-const text = document.getElementById("text");
+
+let timeRunning; // variable for the interval
+
+function startGame() {
+    addWordToDOM(); //Initial call
+    let timeRunning = setInterval(startTimer, 1000);
+}
 
 const word = document.getElementById("word");
 
@@ -22,7 +22,7 @@ function addWordToDOM() { //add random words from array
     document.getElementById("word").innerText = randomWord;
 }
 
-
+const text = document.getElementById("text");
 const input = document.querySelector("input");
 
 input.addEventListener("input", () => {
@@ -50,10 +50,11 @@ function updateTime() {
     timeEl.innerText = time;
 }
 
-const timeRunning = setInterval(startTimer, 1000);
+//let timeRunning = setInterval(startTimer, 1000);
 function startTimer() {
     time--;
     timeEl.innerText = time;
+    console.log(time);
     if (time === 0) {
         clearInterval(timeRunning);
         endgame();
@@ -66,13 +67,48 @@ function endgame() {
     endgameEl.style.display = 'block';
 }
 
-/*
-Add an event listener to the settings button that will hide the settings 
+const settingsBtn = document.getElementById("settings-btn");
+const settings = document.getElementById("settings");
+const settingsForm = document.getElementById("settings-form");
+const difficultySelect = document.getElementById("difficulty");
 
-Add an event listener for the settings form so that you can change the difficulty 
+settingsBtn.addEventListener("click", hideSettings);
 
-Set time depending on difficulty in the eventlistener 
-*/
+function hideSettings() {
+    settingsBtn.style.display = 'none';
+}
+
+settingsForm.addEventListener("click", chooseDifficulty);
+
+function chooseDifficulty(e) {
+    e.preventDefault(); // prevent form from submitting normally
+
+    clearInterval(timeRunning); // stop timer
+
+    const selectedDifficulty = difficultySelect.value;
+
+    if (selectedDifficulty === "easy") {
+        time = 15;
+    } else if (selectedDifficulty === "medium") {
+        time = 10;
+    } else if (selectedDifficulty === "hard") {
+        time = 5;
+    }
+
+    //Reset
+    score = 0;
+    scoreEl.innerText = score;
+
+    addWordToDOM();
+
+    timeEl.innerText = time;
+
+    input.value = "";
+
+    endgameEl.style.display = "none";
+
+    timeRunning = setInterval(startTimer, 1000);
+}
 
 // Array
 const words = [
@@ -97,5 +133,4 @@ const words = [
   "north",
 ];
 
-addWordToDOM(); //Initial call
-startTimer(); //Initial timer
+startGame();
