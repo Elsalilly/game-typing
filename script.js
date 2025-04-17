@@ -18,6 +18,11 @@ function startGame() {
 const word = document.getElementById("word");
 
 function addWordToDOM() { //add random words from array
+    if (words.length === 0) {
+        console.error("Words array is empty!");
+        return;
+    }
+    
     randomWord = words[Math.floor(Math.random()* words.length)];
     document.getElementById("word").innerText = randomWord;
 }
@@ -67,7 +72,7 @@ const endgameEl = document.getElementById("end-game-container");
 function endgame() {
     endgameEl.style.display = 'block';
 
-    settings.style.dysplay = "block"; //shows the panel
+    settings.style.display = "block"; //shows the panel
     settingsBtn.style.display = "block"; //shows the button
 }
 
@@ -76,23 +81,17 @@ const settings = document.getElementById("settings");
 const settingsForm = document.getElementById("settings-form");
 const difficultySelect = document.getElementById("difficulty");
 
-settingsBtn.addEventListener("click", hideSettings);
-
-function hideSettings() {
-    settingsBtn.style.display = 'none'; //hides the button
-}
-
 settingsBtn.addEventListener("click", () => {
-    settings.style.dysplay = "none"; //hides the panel
+    settings.style.display = "none"; //hides the panel
     settingsBtn.style.display = "none"; //hides the button
 });
 
-settingsBtn.onclick = () => location.reload();
+settingsBtn.onclick = () => location.reload(); //Reload page on click
+
 
 settingsForm.addEventListener("click", chooseDifficulty); //needs like a double click to change
 
-function chooseDifficulty(e) {
-    e.preventDefault(); // prevent form from submitting normally
+function chooseDifficulty() {
 
     clearInterval(timeRunning); // stop timer
 
@@ -119,7 +118,7 @@ function chooseDifficulty(e) {
     endgameEl.style.display = "none";
 
     startGame();
-    hideSettings(); //hide settings when the game starts
+    settingsBtn.style.display = 'none'; //hides button when the game starts
 }
 
 // Array
