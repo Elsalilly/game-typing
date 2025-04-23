@@ -1,3 +1,38 @@
+// Variables for DOM elements
+const word = document.getElementById("word");
+const input = document.querySelector("input");
+const scoreEl = document.getElementById("score");
+const timeEl = document.getElementById("time");
+const endgameEl = document.getElementById("end-game-container");
+const settingsBtn = document.getElementById("settings-btn");
+const settings = document.getElementById("settings");
+const settingsForm = document.getElementById("settings-form");
+const difficultySelect = document.getElementById("difficulty");
+
+// Array
+const words = [
+    "dependent",
+    "dog",
+    "superficial",
+    "admit",
+    "juice",
+    "javascript",
+    "developer",
+    "airplane",
+    "great",
+    "fun",
+    "manipulate",
+    "cat",
+    "transition",
+    "school",
+    "computer",
+    "programming",
+    "drag",
+    "loving",
+    "north",
+  ];
+
+//INITIAL VALUES
 
 //Initializing word
 let randomWord;
@@ -8,16 +43,18 @@ let score = 0;
 //Initializing time
 let time = 15;
 
-let timeRunning; // variable for the interval
+//Counting Down
+let timeRunning;
 
+// FUNCTIONS
 function startGame() {
     addWordToDOM(); //Initial call
-    timeRunning = setInterval(startTimer, 1000); //start timer
+    clearInterval(timeRunning);
+    timeRunning = setInterval(updateTime, 1000); //start timer
 }
 
-const word = document.getElementById("word");
-
-function addWordToDOM() { //add random words from array
+//add random words from array
+function addWordToDOM() {
     if (words.length === 0) {
         console.error("Words array is empty!");
         return;
@@ -27,75 +64,39 @@ function addWordToDOM() { //add random words from array
     document.getElementById("word").innerText = randomWord;
 }
 
-const text = document.getElementById("text");
-const input = document.querySelector("input");
-
-input.addEventListener("input", () => {
-    const wordInput = input.value.trim();
-
-    if(wordInput === randomWord) { //check so input and array are the same
-        addWordToDOM();
-        updateScore();
-        updateTime();
-        input.value ="";
-    }
-});
-
-const scoreEl = document.getElementById("score");
-
-function updateScore() { // adding 5 points for every correct answer
+// adding 5 points for every correct answer
+function updateScore() {
     score += 5;
     scoreEl.innerText = score;
 }
 
 
-const timeEl = document.getElementById("time"); // adding 5 seconds for every correct answer
+ // Update time
 function updateTime() {
-    time += 5;
-    timeEl.innerText = time;
-}
-
-
-function startTimer() {
     time--;
-    timeEl.innerText = time;
-    console.log(time);
-    
+    timeEl.innerHTML = time + "s";
+
     if (time === 0) {
         clearInterval(timeRunning);
         endgame();
     }
 }
 
-const endgameEl = document.getElementById("end-game-container");
 
 function endgame() {
-    endgameEl.style.display = 'block';
+    endgameEl.innerHTML = `<h1>Time's up!</h1> <p>Your final score is ${score}</p> <button onClick="location.reload()">Reload</button>`;
+    endgameEl.style.display = 'flex';
 
     settings.style.display = "block"; //shows the panel
     settingsBtn.style.display = "block"; //shows the button
 }
 
-const settingsBtn = document.getElementById("settings-btn");
-const settings = document.getElementById("settings");
-const settingsForm = document.getElementById("settings-form");
-const difficultySelect = document.getElementById("difficulty");
-
-settingsBtn.addEventListener("click", () => {
-    settings.style.display = "none"; //hides the panel
-    settingsBtn.style.display = "none"; //hides the button
-});
-
-settingsBtn.onclick = () => location.reload(); //Reload page on click
-
-
-settingsForm.addEventListener("click", chooseDifficulty); //needs like a double click to change
-
+//Choose difficulty
 function chooseDifficulty() {
-
     clearInterval(timeRunning); // stop timer
 
     const selectedDifficulty = difficultySelect.value;
+    localStorage.setItem("difficulty", selectedDifficulty); //Save difficulty
 
     if (selectedDifficulty === "easy") {
         time = 15;
@@ -109,37 +110,51 @@ function chooseDifficulty() {
     score = 0;
     scoreEl.innerText = score;
 
-    addWordToDOM();
-
     timeEl.innerText = time;
-
     input.value = "";
 
     endgameEl.style.display = "none";
-
-    startGame();
     settingsBtn.style.display = 'none'; //hides button when the game starts
+    
+    startGame();
 }
 
-// Array
-const words = [
-  "dependent",
-  "dog",
-  "superficial",
-  "admit",
-  "juice",
-  "javascript",
-  "developer",
-  "airplane",
-  "great",
-  "fun",
-  "manipulate",
-  "cat",
-  "transition",
-  "school",
-  "computer",
-  "programming",
-  "drag",
-  "loving",
-  "north",
-];
+//USER INPUT / EVENT LISTENERS
+input.addEventListener("input", () => {
+    const wordInput = input.value.trim();
+    const selectedDifficulty = difficultySelect.value;
+
+    if(wordInput === randomWord) { //check so input and array are the same
+        addWordToDOM();
+        updateScore();
+
+        input.value ="";
+
+        if(selectedDifficulty === "hard") {
+            time += 2;
+        } else if (selectedDifficulty === "medium") {
+            time += 5;
+        } else {
+            time += 10;
+        }
+        updateTime();
+    }
+});
+
+//Settings BTN CLICK
+settingsBtn.addEventListener("click", () => {
+    settings.style.display = "none"; //hides the panel
+    settingsBtn.style.display = "none"; //hides the button
+});
+
+settingsForm.addEventListener("change", chooseDifficulty);
+
+
+// STARTING THE GAME
+// Read difficulty from storage
+const savedDifficulty = localStorage.getItem("difficulty");
+if (savedDifficulty) {
+    difficultySelect.value = savedDifficulty;
+}
+
+chooseDifficulty();
