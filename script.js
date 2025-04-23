@@ -46,6 +46,7 @@ let time = 15;
 //Counting Down
 let timeRunning;
 
+
 // FUNCTIONS
 function startGame() {
     addWordToDOM(); //Initial call
@@ -61,7 +62,7 @@ function addWordToDOM() {
     }
     
     randomWord = words[Math.floor(Math.random()* words.length)];
-    document.getElementById("word").innerText = randomWord;
+    word.innerText = randomWord;
 }
 
 // adding 5 points for every correct answer
